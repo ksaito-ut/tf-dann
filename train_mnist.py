@@ -1,10 +1,6 @@
-#%matplotlib inline
-
 import tensorflow as tf
 import numpy as np
 import cPickle as pkl
-from sklearn.manifold import TSNE
-
 from flip_gradient import flip_gradient
 from utils import *
 
@@ -176,13 +172,13 @@ def train_and_evaluate(training_mode, graph, model, verbose=True):
                 X, y = gen_source_only_batch.next()
                 _, batch_loss = sess.run([regular_train_op, pred_loss],
                                      feed_dict={model.X: X, model.y: y, model.train: False,
-                                                model.l: l, learning_rate: lr})
+                                                model.l: l, learning_rate: lr,model.keep_prob:dropout})
 
             elif training_mode == 'target':
                 X, y = gen_target_only_batch.next()
                 _, batch_loss = sess.run([regular_train_op, pred_loss],
                                      feed_dict={model.X: X, model.y: y, model.train: False,
-                                                model.l: l, learning_rate: lr})
+                                                model.l: l, learning_rate: lr,model.keep_prob:dropout})
 
         # Compute final evaluation on test data
         #with tf.device('/gpu:0'):
@@ -206,31 +202,15 @@ def train_and_evaluate(training_mode, graph, model, verbose=True):
              total_source += source_acc
              total_target += target_acc
              step += 1
-             #test_domain_acc = sess.run(domain_acc,
-             #                           feed_dict={model.X: combined_test_imgs,
-             #                                      model.domain: combined_test_domain, model.l: 1.0})
-             
-             #test_emb = sess.run(model.feature, feed_dict={model.X: combined_test_imgs})
 
     return total_source/num_iter,total_target/num_iter
 
-
 print '\nSource only training'
-#source_acc, target_acc, _, source_only_emb = train_and_evaluate('source', graph, model)
-#print 'Source (MNIST) accuracy:', source_acc
-#print 'Target (MNIST-M) accuracy:', target_acc
-
+source_acc, target_acc, = train_and_evaluate('source', graph, model)
+print 'Source (MNIST) accuracy:', source_acc
+print 'Target (MNIST-M) accuracy:', target_acc
 print '\nDomain adaptation training'
 source_acc, target_acc = train_and_evaluate('dann', graph, model)
 print 'Source (MNIST) accuracy:', source_acc
 print 'Target (MNIST-M) accuracy:', target_acc
-#print 'Domain accuracy:', d_acc
-#tsne = TSNE(perplexity=30, n_components=2, init='pca', n_iter=3000)
-#source_only_tsne = tsne.fit_transform(source_only_emb)
-
-#tsne = TSNE(perplexity=30, n_components=2, init='pca', n_iter=3000)
-#dann_tsne = tsne.fit_transform(dann_emb)
-        
-#plot_embedding(source_only_tsne, combined_test_labels.argmax(1), combined_test_domain.argmax(1), 'Source only')
-#plot_embedding(dann_tsne, combined_test_labels.argmax(1), combined_test_domain.argmax(1), 'Domain Adaptation')
-
+print 'Domain accuracy:', d_acc

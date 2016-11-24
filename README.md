@@ -19,10 +19,10 @@ y = flip_gradient(x, l)
 
 The `MNIST-DANN.ipynb` notebook implements the MNIST experiments for the paper with the same model and optimization parameters, including the learning rate and adaptation parameter schedules. Rough results are below (more training would likely improve results - # epochs are not reported in the paper).
 
-| Method | Target acc (paper) | Target acc (this repo w/ 10 epochs) |
+| Method | Target acc (paper) | Target acc (our implementation) |
 | ------ | ------------------ | ----------------------------------- |
-| Source Only | 0.5225 | 0.4801 |
-| DANN | 0.7666 | 0.7189 |
+| Source Only | 0.5225 | 0.5681 |
+| DANN | 0.7666 | 0.7631 |
 
 
 ### Build MNIST-M dataset
